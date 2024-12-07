@@ -1,6 +1,7 @@
 todos os switches terão 24 portas
 serão utilizados apenas DIOs
 os cabos de dados e cftv na malha horizontal terão as mesmas cores
-as etiquetas 
-sera considerado DVRs com suporte para 8 cameras
+estão sendo consideradas todas as portas, ate as que não estão sendo usadas para a quantificação das etiquetas
+os DVRS possuem 2u de altura no rack
+sera considerado DVRs com suporte para 8 câmeras
 O input "quantidade de backbones por andar" é inutil
