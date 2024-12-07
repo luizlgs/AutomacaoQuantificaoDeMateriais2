@@ -3,3 +3,4 @@ serão utilizados apenas DIOs
 os cabos de dados e cftv na malha horizontal terão as mesmas cores
 as etiquetas 
 sera considerado DVRs com suporte para 8 cameras
+O input "quantidade de backbones por andar" é inutil
