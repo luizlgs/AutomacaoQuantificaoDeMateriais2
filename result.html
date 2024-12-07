@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+    <html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Resultados dos Cálculos</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+                padding-top: 50px;
+                margin: 0;
+                background-color: #f5f5f5;
+            }
+
+            .result-container {
+                width: 90%;
+                max-width: 1200px;
+                background: #ffffff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                display: flex;
+                gap: 20px;
+                flex-wrap: wrap;
+            }
+
+            .result-section {
+                flex: 1;
+                min-width: 200px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            h2 {
+                text-align: center;
+                color: #333333;
+                width: 100%;
+            }
+
+            .result-section h3 {
+                color: #4CAF50;
+                border-bottom: 2px solid #4CAF50;
+                padding-bottom: 5px;
+            }
+
+            .result-item {
+                font-size: 16px;
+                color: #333333;
+                line-height: 1.6;
+            }
+
+            .button-container {
+                text-align: center;
+                margin-top: 20px;
+            }
+
+            .back-btn {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+
+            .back-btn:hover {
+                background-color: #45a049;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="result-container">
+            <h2>Resultados dos Cálculos</h2>
+
+            <!-- Malha Horizontal -->
+            <div class="result-section" id="malhaHorizontal">
+                <h3>Malha Horizontal</h3>
+                <div class="result-item" id="malhaResults"></div>
+            </div>
+
+            <!-- Backbone Primário -->
+            <div class="result-section" id="backbonePrimario">
+                <h3 id="backbone_primario">Backbone Primário</h3>
+                <div class="result-item" id="backbonePrimarioResults"></div>
+            </div>
+
+            <!-- Backbone Secundário, sempre visível -->
+            <div class="result-section" id="backboneSecundario">
+                <h3 id="backbone_secundario">Backbone Secundário</h3>
+                <div class="result-item" id="backboneSecundarioResults"></div>
+            </div>
+
+            <!-- Miscelânea -->
+            <div class="result-section" id="miscelaneaResults">
+                <h3>Miscelânea do backbone</h3>
+                <div class="result-item" id="miscelaneaResultsDisplay"></div>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button class="back-btn" onclick="goBack()">Fazer outro cálculo</button>
+        </div>
+
+        <script>
+            
+            function displayResults() {
+                const params = new URLSearchParams(window.location.search);
+                
+                // Cria um objeto para armazenar os dados recuperados
+                const data = {};
+            
+                // Itera sobre os parâmetros e os adiciona ao objeto
+                for (const [key, value] of params.entries()) {
+                    data[key] = Number(value);
+                }
+                
+                //malha Horizontal
+                var tomadasRj45 = data['dados']+data['cftv']+data['voip'];
+                var cordaoDeLigaçãoAzul = data['dados']+data['voip'];
+                var cordaoDeLigaçãoCFTV = data['cftv'];
+                var EspelhoDeConexao = Math.ceil(tomadasRj45/2);
+                var etiquetasParaTomadasEEspelhos = tomadasRj45 + EspelhoDeConexao;
+                var caixasCaboUTP = Math.ceil((data['dados']+data['cftv']+data['voip'])/305*data['distanciaMH']);
+                var etiquetasCabosMalhaHorizontal = (data['dados']+data['cftv']+data['voip'])*2;
+                var ppmh = Math.ceil((data['dados']+data['voip'])/24);
+                var organizadorFrontalDeCabos = ppmh*2;
+                var etiquetasParaIdentificacaoDePortas = ppmh*24; //também foram consideradas as portas que não estão sendo usadas
+                var cordaoPatchCableAzul = data['dados'];
+                var cordaoPatchCableAmarelo = data['cftv'];
+                var cordaoPatchCableVermelho = data['voip'];
+
+                /*calculo de racks
+                considerações: switches, patch panels (ambos com 24 portas) e dvrs para 8 cameras*/
+                var racks = 0;
+
+                var numDVR = Math.ceil(data['cftv']/8);
+                var tamRackTot = ppmh + (numDVR*2) + (Math.ceil((ppmh + (numDVR*2))/2)); //valor ja com o acrescimo de 50% e dvr com o tamanho de 2u
+                var tamUnidRack = 0;
+
+                var arr = [];
+                var arr2 = "";
+                if (tamRackTot <= 48) { //considerando um tamanho maximo para o rack como 48u
+                    racks++;
+                    if(tamRackTot%4!=0){
+                        for(var i = tamRackTot; i%4!=0; i++){}
+                        arr2 = i.toString()+"u";
+                        arr.push(tamRackTot.toString())+"u";
+                        
+                    }
+                    else{
+                        arr2 = tamRackTot.toString()+"u";
+                        arr.push(tamRackTot.toString());
+                    }
+                }
+                else{
+                    racks = Math.ceil(tamRackTot/48);
+                    tamUnidRack = tamRackTot - (48*(racks-1));
+                    if(tamUnidRack%4!=0){
+                        for(var i = tamUnidRack; i%4!=0; i++){}
+                        tamUnidRack = i;
+                    }
+                    else {
+                        tamUnidRack = tamRackTot;
+                    }
+                    var maxrack = 48;
+                    for (var i = 0; i<racks-1; i++){
+                        arr.push(" "+maxrack.toString()+"u");
+                    }
+                    arr.push(" "+tamUnidRack.toString()+"u");
+                    arr2 = arr.toString();
+                }
+                
+
+
+                var organizadoresLaterais = racks*2;
+                var bandejasFixas = racks;
+                var bandejasDeslizantes = numDVR; //talvez seja um para cada dvr, mas coloquei 0
+                var parafusoPorcaGaiola = Math.ceil(((tamUnidRack*racks)*4)/10);
+                var abracadeiraVelcro = racks;
+                var abracadeiraHellerman = racks;
+                var filtrosDeLinha = racks;
+                var etiquetasParaRacks = racks;
+
+                var etiquetasParaPatchCables = tomadasRj45*2
+
+
+
+
+
+                //Backbone Primario
+                //todos os DIOS terão suporte a 24 fibras
+
+                var numDiosPrimario = Math.ceil((data['pavimentos'] * data['paresFibras'] * 2)/24);
+                var caixaDeEmenda = numDiosPrimario * 2; //duas caixas de emenda por DIO
+                var pigtailsPrimarios = data['pavimentos'] * data['paresFibras'] * 2;
+                var acopladorOpticoPrimario = (data['pavimentos'] * data['paresFibras'] * 2)/2; //metade do numero de fibras totais
+                var cordaoOpticoPrimario = data['pavimentos'] * data['paresFibras'] * 2 //mesmo valor do numero de fibras totais
+
+                //calculo cabo optico multimodo de backbone
+                var caboOpticoInterno = 0;
+                for (var i = 1; i<data['pavimentos']; i++){
+                    caboOpticoInterno += (data['distanciaBackbone'] * i) + 1;
+                }
+
+                //calculo rack backbone primario (sera considerado o espaço para DIOS)
+                var tamRacksBackbonePrimario = numDiosPrimario + (Math.ceil(numDiosPrimario/2));
+                if(tamRacksBackbonePrimario%4!=0){
+                        for(var i = tamRacksBackbonePrimario; i%4!=0; i++){}
+                        tamRacksBackbonePrimario = i;
+                }
+
+
+                if(data['rack'] === 'sim'){
+                    var fechadoouaberto = 'aberto';
+                }
+                else {
+                    var fechadoouaberto = 'fechado';
+                }
+
+                var numRacksPrimario = 1;
+
+
+
+
+
+                //backbone secundario
+                var distanciaPredios = data['distanciaPredios'];
+
+                var numDiosSecundario = Math.ceil((data['paresFibras'] * 2)/24);
+                var caixaDeEmendaSecundario = numDiosSecundario * 2; //duas caixas de emenda por DIO
+                var pigtailsSecundarios = data['paresFibras'] * 2;
+                var acopladorOpticoSecundario = data['paresFibras'];
+                var cordaoOpticoSecundario = distanciaPredios;
+                var caboOpticoExterno = distanciaPredios;
+
+                //calculo rack backbone secundario (sera considerado o espaço para DIOS)
+                var tamRacksBackboneSecundario = numDiosSecundario + (Math.ceil(numDiosSecundario/2));
+                if(tamRacksBackboneSecundario%4!=0){
+                        for(var i = tamRacksBackboneSecundario; i%4!=0; i++){}
+                        tamRacksBackboneSecundario = i;
+                }
+                var numRacksSecundario = 1;
+
+
+
+
+
+                //miscelanea backbone
+                var abracadeiraVelcroBackbones = numRacksPrimario + numRacksSecundario;
+                var abracadeiraHellermanBackbones = numRacksPrimario + numRacksSecundario;
+                var filtroDeLihnaBackbones = numRacksPrimario + numRacksSecundario;
+                var etiquestasRacksBackbone = numRacksPrimario + numRacksSecundario;
+                var totaRacksBackbone = numRacksPrimario + numRacksSecundario;
+
+                // Agora você pode usar o objeto data como desejar
+                console.log(data); // Exibe os dados no console
+                // Adicionar itens fixos na seção de Malha Horizontal
+
+                for (const [key, value] of params.entries()) {
+                    data[key] = value;
+                }
+                
+                const fixedItems = [
+                    `Tomada RJ 45 Fêmea (categoria ${data['categoria']}): ${tomadasRj45} unidades`,
+                    `Cordão de ligação (Patch Cord), (categoria ${data['categoria']}), (Tamanho 3m), (cor: azul): ${cordaoDeLigaçãoAzul} unidades`,
+                    `Cordão de ligação (Patch Cord), (categoria ${data['categoria']}), (Tamanho 3m), (cor: mesma do teto): ${cordaoDeLigaçãoCFTV} unidades`,
+                    `Espelho de conexão (Tamanho 2x4): ${EspelhoDeConexao} unidades`,
+                    `Etiquetas para identificação de tomadas e espelho: ${etiquetasParaTomadasEEspelhos} unidades`,
+                    `Cabo UTP rígido (categoria ${data['categoria']}): ${caixasCaboUTP} caixas`,
+                    `Etiqueta identificação do cabo de malha horizontal: ${etiquetasCabosMalhaHorizontal} unidades`,
+                    `PPMH (Patch Panel de Malha Horizontal): ${ppmh} unidades`,
+                    `Organizador frontal de cabo - Tipo - (Unidade de altura e largura: 19 polegadas): ${organizadorFrontalDeCabos} unidades`,
+                    `Etiquetas de identificação de portas do Patch Panel: ${etiquetasParaIdentificacaoDePortas} unidades`,
+                    `Cordão de Ligação, flexível, (Patch Cable), (categoria ${data['categoria']}), (Tamanho: 2m), (cor: azul): ${cordaoPatchCableAzul} unidades`,
+                    `Cordão de Ligação, flexível, (Patch Cable), (categoria ${data['categoria']}), (Tamanho: 2m), (cor: amarelo): ${cordaoPatchCableAmarelo} unidades`,
+                    `Cordão de Ligação, flexível, (Patch Cable), (categoria ${data['categoria']}), (Tamanho: 2m), (cor: vermelho): ${cordaoPatchCableVermelho} unidades`,
+
+                    `Rack(s) (${fechadoouaberto}) = ${arr.length} unidades (${arr2})`,
+                    `Total de rack: ${tamRackTot}`,
+
+                    `Organizador lateral para Rack (Para os tamanhos correspondentes): ${organizadoresLaterais} unidades`,
+                    `Bandeja fixa - 19" de largura: ${bandejasFixas} unidades`,
+                    `Bandeja deslizante - 19" de largura: ${bandejasDeslizantes} unidades`,
+                    `Parafuso Porca Gaiola (conjunto com 10 unidades): ${parafusoPorcaGaiola} conjuntos`,
+                    `Abraçadeira de velcro: ${abracadeiraVelcro} rolo(s) 3m`,
+                    `Abraçadeira Hellermann (conjunto com 100 unidades): ${abracadeiraHellerman} conjuntos`,
+                    `Filtro de linha com 06 tomadas: ${filtrosDeLinha} unidades`,
+                    `Etiquetas para Rack: ${etiquetasParaRacks} unidades`,
+                    `Etiquetas para identificação dos patch Cables: ${etiquetasParaPatchCables} unidades`
+                ];
+
+                const fixedItems2 = [
+                    `DIO (Unid.):${numDiosPrimario} `,
+                    `Caixas de emenda (Unid.):${caixaDeEmenda}`,
+                    `Pigtail ${data['caboFibra']} 50x125 simples LC (Unid.):${pigtailsPrimarios}`,
+                    `Acoplador óptico 50x125 LC duplo azul (Unid.): ${acopladorOpticoPrimario}`,
+                    `Cordão óptico 50x125 simples LC (Unid): ${cordaoOpticoPrimario}`,
+                    `Cabo Óptico ${data['caboFibra']} 50x125 Tight Buffer ${data['paresFibras'] * 2} fibras (metros):  ${caboOpticoInterno}`,
+                    `Rack(s) de ${tamRacksBackbonePrimario}u (Unid.): ${1}`
+                ];
+
+                const fixedItems3 = [];
+
+                if (data['backboneExistente'] === "nao") {
+                    fixedItems3.push(`Backbone Secundário inexistente`);
+                    miscelaniabackbone = 0;
+                    
+                } else {
+                    backbone_secundario.innerText = "Backbone Primário"
+                    backbone_primario.innerText = "Backbone Secundário"  
+                    miscelaniabackbone = 1;
+                        fixedItems3.push(
+                        `DIO (Unid.): ${numDiosSecundario}`,
+                        `Caixa de emenda (Unid.): ${caixaDeEmendaSecundario}`,
+                        `Pigtail SM 9x125 simples LC (Unid.):${pigtailsSecundarios}`,
+                        `Acoplador óptico 9x125 LC azul (Unid.): ${acopladorOpticoSecundario}`,
+                        `Cordão óptico 9x125 simples LC (metros): ${cordaoOpticoSecundario}`,
+                        `Cabo Óptico Monomodo 50x125 Tight Buffer ${data['paresFibras'] * 2} fibras (metros):  ${caboOpticoExterno}`,
+                        `Rack(s) ${tamRacksBackboneSecundario}u (Unid.): 1`
+                        );
+                }
+
+                const fixedItems4 = [
+                    `Abraçadeira de velcro para rack(s) de backbone (rolo 3m): ${abracadeiraVelcroBackbones }`,
+                    `Abraçadeira Hellermann conjunto com 100 Unidades para rack(s) de backbone: ${abracadeiraHellermanBackbones}`,
+                    `Filtro de linha com 08 tomadas para rack(s) de backbone: ${filtroDeLihnaBackbones}`,
+                    `Etiquetas para rack(s) de backbone: ${etiquestasRacksBackbone}`,
+                    `total de rack(s) de backbone: ${totaRacksBackbone} `
+                ];
+                
+
+                
+
+                // Adiciona os itens às seções correspondentes
+                fixedItems.forEach(item => {
+                    document.getElementById('malhaResults').innerHTML += `<p><strong>${item}</strong></p>`;
+                });
+
+                fixedItems2.forEach(item => {
+                    document.getElementById('backbonePrimarioResults').innerHTML += `<p><strong>${item}</strong></p>`;
+                });
+
+                fixedItems3.forEach(item => {
+                    document.getElementById('backboneSecundarioResults').innerHTML += `<p><strong>${item}</strong></p>`;
+                });
+
+                fixedItems4.forEach(item => {
+                    document.getElementById('miscelaneaResultsDisplay').innerHTML += `<p><strong>${item}</strong></p>`;
+                });  
+            }
+
+            function goBack() {
+                window.location.href = "index.html"; // Redireciona para a página inicial
+            }
+
+            displayResults();
+        </script>
+    </body>
+    </html>

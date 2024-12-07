@@ -1,0 +1,5 @@
+todos os switches terão 24 portas
+serão utilizados apenas DIOs
+os cabos de dados e cftv na malha horizontal terão as mesmas cores
+as etiquetas 
+sera considerado DVRs com suporte para 8 cameras
