@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Dados de Infraestrutura</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 50px;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+
+        .form-container {
+            width: 90%;
+            max-width: 1200px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-section {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333333;
+            width: 100%;
+        }
+
+        .form-section h3 {
+            color: #4CAF50;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            color: #333333;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .radio-group {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        .backbone-secundario {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Automação da quantificação de dados de infraestrutura</h2>
+        
+        <div class="form-section">
+            <h3>Malha Horizontal</h3>
+
+            <label for="dados">Quantidade de pontos de dados por andar:</label>
+            <input type="number" id="dados" name="dados" min="0" required>
+
+            <label for="cftv">Quantidade de pontos CFTV por andar:</label>
+            <input type="number" id="cftv" name="cftv" min="0" required>
+
+            <label for="voip">Quantidade de pontos Voip por andar:</label>
+            <input type="number" id="voip" name="voip" min="0" required>
+
+            <label for="distanciaMH">Medida básica para cálculo da distância da MH:</label>
+            <input type="number" id="distanciaMH" name="distanciaMH" min="0" required>
+
+            <label for="categoria">Especificação de categoria:</label>
+            <select id="categoria" name="categoria" required>
+                <option value="">Selecione</option>
+                <option value="Cat5">Cat5</option>
+                <option value="Cat5e">Cat5e</option>
+                <option value="Cat6">Cat6</option>
+                <option value="Cat6A">Cat6A</option>
+                <option value="Cat7">Cat7</option>
+            </select>
+
+            <label for="rack">Rack está protegido?</label>
+            <select id="rack" name="rack" required>
+                <option value="">Selecione</option>
+                <option value="sim">Sim</option>
+                <option value="nao">Não</option>
+            </select>
+
+            <label for="pavimentos">Número de pavimentos da edificação:</label>
+            <input type="number" id="pavimentos" name="pavimentos" min="0" required>
+        </div>
+
+        <div class="form-section">
+            <h3>Backbone Primário</h3>
+
+            <label for="paresFibras">Número de pares de fibras que ficarão disponíveis:</label>
+            <input type="number" id="paresFibras" name="paresFibras" min="0" required>
+
+            <label for="distanciaBackbone">Medida básica para cálculo dos lances de cabo backbone:</label>
+            <input type="number" id="distanciaBackbone" name="distanciaBackbone" min="0" required>
+
+            <label for="caboFibra">Especificação do cabo de fibra óptica:</label>
+            <select id="caboFibra" name="caboFibra" required>
+                <option value="">Selecione</option>
+                <option value="monomodo">Monomodo</option>
+                <option value="multimodo">Multimodo</option>
+            </select>
+
+            <label for="caracteristicaFibra">Característica da fibra óptica:</label>
+            <select id="caracteristicaFibra" name="caracteristicaFibra" required>
+                <option value="">Selecione</option>
+                <option value="OM1">OM1</option>
+                <option value="OM2">OM2</option>
+                <option value="OM3">OM3</option>
+                <option value="OM4">OM4</option>
+            </select>
+
+            <label>Verificação da existência de backbone primário e/ou secundário:</label>
+            <div class="radio-group">
+                <label><input type="radio" name="backboneExistente" value="sim" onclick="toggleBackboneSecundario(true)" required>Sim</label>
+                <label><input id="nao" type="radio" name="backboneExistente" value="nao"checked= "checked" onclick="toggleBackboneSecundario(false)" required>Não</label>
+            </div>
+        </div>
+
+
+        <div class="form-section backbone-secundario">
+            <h3>Backbone Secundário</h3>
+        
+            <label for="caboFibraSecundario">Especificação do cabo de fibra óptica secundário:</label>
+            <select id="caboFibraSecundario" name="caboFibraSecundario">
+                <option value="monomodo">Monomodo</option>
+            </select>
+            <label for="distanciaPredios">Distancia entre os prédios (m)</label>
+            <input type="number" id="distanciaPredios" name="distanciaPredios" min="0" value="0" required>
+        </div>
+
+        <button type="button" onclick="submitForm()" class="submit-btn">Enviar</button>
+    </div>
+
+    <script>
+        function toggleBackboneSecundario(isVisible) {
+            const secundarioSection = document.querySelector('.backbone-secundario');
+            secundarioSection.style.display = isVisible ? 'block' : 'none';
+        }
+
+        function submitForm() {
+    const formElements = document.querySelectorAll('input[required], select[required]');
+    let allFilled = true;
+
+    formElements.forEach(element => {
+        if (!element.value) {
+            allFilled = false;
+            element.style.borderColor = 'red'; // Indica o campo não preenchido
+        } else {
+            element.style.borderColor = '#ccc'; // Remove o destaque se estiver preenchido
+        }
+    });
+
+    if (allFilled) {
+        const data = {};
+        formElements.forEach(element => {
+            data[element.name] = element.value;
+        });
+
+        // Adiciona o valor do botão de rádio selecionado (backboneExistente)
+        const selectedRadio = document.querySelector('input[name="backboneExistente"]:checked');
+        if (selectedRadio) {
+            data['backboneExistente'] = selectedRadio.value;
+        }
+
+        const queryString = new URLSearchParams(data).toString();
+        window.location.href = 'result.html?' + queryString;
+    } else {
+        alert("Por favor, preencha todos os campos obrigatórios.");
+    }
+}
+    </script>
+</body>
+</html>
