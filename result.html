@@ -144,6 +144,13 @@
                 var tamRackTot = organizadorFrontalDeCabos + ppmh + (numDVR*2) + (Math.ceil((organizadorFrontalDeCabos + ppmh + (numDVR*2))/2)); //valor ja com o acrescimo de 50% e dvr com o tamanho de 2u
                 var tamUnidRack = 0;
 
+                //calcula a quantidade total de Us para calculo do parafuso porca gaiola
+                var totalU = tamRackTot;
+                for(var i = tamRackTot; i%4!=0; i++){
+                    totalU++;
+                }
+                        
+
                 var arr = [];
                 var arr2 = "";
                 if (tamRackTot <= 48) { //considerando um tamanho maximo para o rack como 48u
@@ -152,14 +159,14 @@
                         for(var i = tamRackTot; i%4!=0; i++){}
                         arr2 = i.toString()+"u";
                         arr.push(tamRackTot.toString())+"u";
-                        
                     }
-                    else{
+                    else {
                         arr2 = tamRackTot.toString()+"u";
                         arr.push(tamRackTot.toString());
+                        
                     }
                 }
-                else{
+                else {
                     racks = Math.ceil(tamRackTot/48);
                     tamUnidRack = tamRackTot - (48*(racks-1));
                     if(tamUnidRack%4!=0){
@@ -172,6 +179,7 @@
                     var maxrack = 48;
                     for (var i = 0; i<racks-1; i++){
                         arr.push(" "+maxrack.toString()+"u");
+                        
                     }
                     arr.push(" "+tamUnidRack.toString()+"u");
                     arr2 = arr.toString();
@@ -181,14 +189,14 @@
 
                 var organizadoresLaterais = racks*2;
                 var bandejasFixas = racks;
-                var bandejasDeslizantes = numDVR; //talvez seja um para cada dvr, mas coloquei 0
-                var parafusoPorcaGaiola = Math.ceil(((tamUnidRack*racks)*4)/10);
+                var bandejasDeslizantes = numDVR; //um para cada dvr
+                var parafusoPorcaGaiola = Math.ceil((totalU*4)/10);
                 var abracadeiraVelcro = racks;
                 var abracadeiraHellerman = racks;
                 var filtrosDeLinha = racks;
                 var etiquetasParaRacks = racks;
 
-                var etiquetasParaPatchCables = tomadasRj45*2
+                var etiquetasParaPatchCables = tomadasRj45*2;
 
 
 
@@ -201,7 +209,7 @@
                 var caixaDeEmenda = numDiosPrimario * 2; //duas caixas de emenda por DIO
                 var pigtailsPrimarios = data['pavimentos'] * data['paresFibras'] * 2;
                 var acopladorOpticoPrimario = (data['pavimentos'] * data['paresFibras'] * 2)/2; //metade do numero de fibras totais
-                var cordaoOpticoPrimario = data['pavimentos'] * data['paresFibras'] * 2 //mesmo valor do numero de fibras totais
+                var cordaoOpticoPrimario = data['pavimentos'] * data['paresFibras'] * 2; //mesmo valor do numero de fibras totais
 
                 //calculo cabo optico multimodo de backbone
                 var caboOpticoInterno = 0;
@@ -232,12 +240,15 @@
 
                 //backbone secundario
                 var distanciaPredios = data['distanciaPredios'];
+                if(distanciaPredios === null){
+                    distanciaPredios = 0;
+                }
 
                 var numDiosSecundario = Math.ceil((data['paresFibras'] * 2)/24);
                 var caixaDeEmendaSecundario = numDiosSecundario * 2; //duas caixas de emenda por DIO
                 var pigtailsSecundarios = data['paresFibras'] * 2;
                 var acopladorOpticoSecundario = data['paresFibras'];
-                var cordaoOpticoSecundario = distanciaPredios;
+                var cordaoOpticoSecundario =  data['paresFibras'] * 2;
                 var caboOpticoExterno = distanciaPredios;
 
                 //calculo rack backbone secundario (sera considerado o espaço para DIOS)
@@ -246,7 +257,15 @@
                         for(var i = tamRacksBackboneSecundario; i%4!=0; i++){}
                         tamRacksBackboneSecundario = i;
                 }
-                var numRacksSecundario = 1;
+                
+                var numRacksSecundario = 0;
+                if(distanciaPredios > 0){
+                    numRacksSecundario = 1;
+                } 
+                
+                
+                 
+                
 
 
 
@@ -268,31 +287,31 @@
                 }
                 
                 const fixedItems = [
-                    `Tomada RJ 45 Fêmea (categoria ${data['categoria']}): ${tomadasRj45} unidades`,
-                    `Cordão de ligação (Patch Cord), (categoria ${data['categoria']}), (Tamanho 3m), (cor: azul): ${cordaoDeLigaçãoAzul} unidades`,
-                    `Cordão de ligação (Patch Cord), (categoria ${data['categoria']}), (Tamanho 3m), (cor: mesma do teto): ${cordaoDeLigaçãoCFTV} unidades`,
-                    `Espelho de conexão (Tamanho 2x4): ${EspelhoDeConexao} unidades`,
-                    `Etiquetas para identificação de tomadas e espelho: ${etiquetasParaTomadasEEspelhos} unidades`,
-                    `Cabo UTP rígido (categoria ${data['categoria']}): ${caixasCaboUTP} caixas`,
-                    `Etiqueta identificação do cabo de malha horizontal: ${etiquetasCabosMalhaHorizontal} unidades`,
-                    `PPMH (Patch Panel de Malha Horizontal): ${ppmh} unidades`,
-                    `Organizador frontal de cabo - Tipo - (Unidade de altura e largura: 19 polegadas): ${organizadorFrontalDeCabos} unidades`,
-                    `Etiquetas de identificação de portas do Patch Panel: ${etiquetasParaIdentificacaoDePortas} unidades`,
-                    `Cordão de Ligação, flexível, (Patch Cable), (categoria ${data['categoria']}), (Tamanho: 2m), (cor: azul): ${cordaoPatchCableAzul} unidades`,
-                    `Cordão de Ligação, flexível, (Patch Cable), (categoria ${data['categoria']}), (Tamanho: 2m), (cor: amarelo): ${cordaoPatchCableAmarelo} unidades`,
-                    `Cordão de Ligação, flexível, (Patch Cable), (categoria ${data['categoria']}), (Tamanho: 2m), (cor: vermelho): ${cordaoPatchCableVermelho} unidades`,
+                    `Tomada RJ 45 Fêmea (categoria ${data['categoria']}): ${tomadasRj45} unidade(s)`,
+                    `Cordão de ligação (Patch Cord), (categoria ${data['categoria']}), (Tamanho 3m), (cor: azul): ${cordaoDeLigaçãoAzul} unidade(s)`,
+                    `Cordão de ligação (Patch Cord), (categoria ${data['categoria']}), (Tamanho 3m), (cor: mesma do teto): ${cordaoDeLigaçãoCFTV} unidade(s)`,
+                    `Espelho de conexão (Tamanho 2x4): ${EspelhoDeConexao} unidade(s)`,
+                    `Etiquetas para identificação de tomadas e espelho: ${etiquetasParaTomadasEEspelhos} unidade(s)`,
+                    `Cabo UTP rígido (categoria ${data['categoria']}): ${caixasCaboUTP} caixa(s)`,
+                    `Etiqueta identificação do cabo de malha horizontal: ${etiquetasCabosMalhaHorizontal} unidade(s)`,
+                    `PPMH (Patch Panel de Malha Horizontal): ${ppmh} unidade(s)`,
+                    `Organizador frontal de cabo - Tipo - (Unidade de altura e largura 19 polegadas): ${organizadorFrontalDeCabos} unidade(s)`,
+                    `Etiquetas de identificação de portas do Patch Panel: ${etiquetasParaIdentificacaoDePortas} unidade(s)`,
+                    `Cordão de Ligação, flexível, (Patch Cable), (categoria ${data['categoria']}), (Tamanho: 2m), (cor: azul): ${cordaoPatchCableAzul} unidade(s)`,
+                    `Cordão de Ligação, flexível, (Patch Cable), (categoria ${data['categoria']}), (Tamanho: 2m), (cor: amarelo): ${cordaoPatchCableAmarelo} unidade(s)`,
+                    `Cordão de Ligação, flexível, (Patch Cable), (categoria ${data['categoria']}), (Tamanho: 2m), (cor: vermelho): ${cordaoPatchCableVermelho} unidade(s)`,
 
                     `Rack(s) (${fechadoouaberto}) = ${arr.length} unidade(s) (${arr2})`,
                     
-                    `Organizador lateral para Rack (Para os tamanhos correspondentes): ${organizadoresLaterais} unidades`,
-                    `Bandeja fixa - 19" de largura: ${bandejasFixas} unidades`,
-                    `Bandeja deslizante - 19" de largura: ${bandejasDeslizantes} unidades`,
-                    `Parafuso Porca Gaiola (conjunto com 10 unidades): ${parafusoPorcaGaiola} conjuntos`,
+                    `Organizador lateral para Rack (Para os tamanhos correspondentes): ${organizadoresLaterais} unidade(s)`,
+                    `Bandeja fixa - 19" de largura: ${bandejasFixas} unidade(s)`,
+                    `Bandeja deslizante - 19" de largura: ${bandejasDeslizantes} unidade(s)`,
+                    `Parafuso Porca Gaiola (conjunto com 10 unidades): ${parafusoPorcaGaiola} conjunto(s)`,
                     `Abraçadeira de velcro: ${abracadeiraVelcro} rolo(s) 3m`,
-                    `Abraçadeira Hellermann (conjunto com 100 unidades): ${abracadeiraHellerman} conjuntos`,
-                    `Filtro de linha com 06 tomadas: ${filtrosDeLinha} unidades`,
-                    `Etiquetas para Rack: ${etiquetasParaRacks} unidades`,
-                    `Etiquetas para identificação dos patch Cables: ${etiquetasParaPatchCables} unidades`
+                    `Abraçadeira Hellermann (conjunto com 100 unidades): ${abracadeiraHellerman} conjunto(s)`,
+                    `Filtro de linha com 06 tomadas: ${filtrosDeLinha} unidade(s)`,
+                    `Etiquetas para Rack: ${etiquetasParaRacks} unidade(s)`,
+                    `Etiquetas para identificação dos patch Cables: ${etiquetasParaPatchCables} unidade(s)`
                 ];
 
                 const fixedItems2 = [
@@ -320,7 +339,7 @@
                         `Caixa de emenda (Unid.): ${caixaDeEmendaSecundario}`,
                         `Pigtail SM 9x125 simples LC (Unid.):${pigtailsSecundarios}`,
                         `Acoplador óptico 9x125 LC azul (Unid.): ${acopladorOpticoSecundario}`,
-                        `Cordão óptico 9x125 simples LC (metros): ${cordaoOpticoSecundario}`,
+                        `Cordão óptico 9x125 simples LC (Unid.): ${cordaoOpticoSecundario}`,
                         `Cabo Óptico Monomodo 50x125 Tight Buffer ${data['paresFibras'] * 2} fibras (metros):  ${caboOpticoExterno}`,
                         `Rack(s) ${tamRacksBackboneSecundario}u (Unid.): 1`
                         );
