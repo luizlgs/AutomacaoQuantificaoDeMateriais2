@@ -130,8 +130,8 @@
                 var organizadorFrontalDeCabos = ppmh;
                 var etiquetasParaIdentificacaoDePortas = ppmh*24; //também foram consideradas as portas que não estão sendo usadas
                 var cordaoPatchCableAzul = data['dados'] * data['pavimentos'];
-                var cordaoPatchCableAmarelo = data['cftv'] * data['pavimentos'];
-                var cordaoPatchCableVermelho = data['voip'] * data['pavimentos'];
+                var cordaoPatchCableAmarelo = data['voip'] * data['pavimentos'];
+                var cordaoPatchCableVermelho = data['cftv'] * data['pavimentos'];
 
                 /*
                 calculo de racks
@@ -288,8 +288,8 @@
                 
                 const fixedItems = [
                     `Tomada RJ 45 Fêmea (categoria ${data['categoria']}): ${tomadasRj45} unidade(s)`,
-                    `Cordão de ligação (Patch Cord), (categoria ${data['categoria']}), (Tamanho 3m), (cor: azul): ${cordaoDeLigaçãoAzul} unidade(s)`,
-                    `Cordão de ligação (Patch Cord), (categoria ${data['categoria']}), (Tamanho 3m), (cor: mesma do teto): ${cordaoDeLigaçãoCFTV} unidade(s)`,
+                    `Cordão de ligação (Patch Cord), ${data['distanciaMH']} metros, (categoria ${data['categoria']}), (cor: azul): ${cordaoDeLigaçãoAzul} unidade(s)`,
+                    `Cordão de ligação (Patch Cord), ${data['distanciaMH']} metros, (categoria ${data['categoria']}), (cor: mesma do teto): ${cordaoDeLigaçãoCFTV} unidade(s)`,
                     `Espelho de conexão (Tamanho 2x4): ${EspelhoDeConexao} unidade(s)`,
                     `Etiquetas para identificação de tomadas e espelho: ${etiquetasParaTomadasEEspelhos} unidade(s)`,
                     `Cabo UTP rígido (categoria ${data['categoria']}): ${caixasCaboUTP} caixa(s)`,
