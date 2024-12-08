@@ -98,7 +98,7 @@
             <label for="dados">Dados:</label>
             <input type="number" id="dados" name="dados" min="0" required>
 
-            <label for="cftv">CFTV:</label>
+            <label for="cftv">Cftv:</label>
             <input type="number" id="cftv" name="cftv" min="0" required>
 
             <label for="voip">VOIP:</label>
@@ -155,8 +155,8 @@
 
             <label>Verificação da existência de backbone primário e/ou secundário:</label>
             <div class="radio-group">
-                <label><input type="radio" name="backboneExistente" value="sim" onclick="toggleBackboneSecundario(true)" required> Sim</label>
-                <label><input id="nao" type="radio" name="backboneExistente" value="nao"checked= "checked" onclick="toggleBackboneSecundario(false)" required> Não </label>
+                <label><input type="radio" name="backboneExistente" value="sim" onclick="toggleBackboneSecundario(true)" required>Sim</label>
+                <label><input id="nao" type="radio" name="backboneExistente" value="nao"checked= "checked" onclick="toggleBackboneSecundario(false)" required>Não</label>
             </div>
         </div>
 
@@ -169,7 +169,7 @@
                 <option value="monomodo">Monomodo</option>
             </select>
             <label for="distanciaPredios">Distancia entre os prédios (m)</label>
-            <input type="number" id="distanciaPredios" name="distanciaPredios" min="0">
+            <input type="number" id="distanciaPredios" name="distanciaPredios" min="0" required>
         </div>
 
         <button type="button" onclick="submitForm()" class="submit-btn">Enviar</button>
