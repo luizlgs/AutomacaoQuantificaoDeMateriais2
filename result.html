@@ -193,7 +193,7 @@
                 var parafusoPorcaGaiola = Math.ceil((totalU*4)/10);
                 var abracadeiraVelcro = racks;
                 var abracadeiraHellerman = racks;
-                var filtrosDeLinha = racks;
+                var filtrosDeLinha = Math.ceil(numDVR/6); //um a cada 6 DVRs
                 var etiquetasParaRacks = racks;
 
                 var etiquetasParaPatchCables = tomadasRj45*2;
@@ -274,7 +274,7 @@
                 //miscelanea backbone
                 var abracadeiraVelcroBackbones = numRacksPrimario + numRacksSecundario;
                 var abracadeiraHellermanBackbones = numRacksPrimario + numRacksSecundario;
-                var filtroDeLihnaBackbones = numRacksPrimario + numRacksSecundario;
+                var filtroDeLihnaBackbones = Math.ceil((numDiosPrimario+numDiosSecundario)/6); //um a cada 6 DIOs
                 var etiquestasRacksBackbone = numRacksPrimario + numRacksSecundario;
                 var totaRacksBackbone = numRacksPrimario + numRacksSecundario;
 
@@ -348,7 +348,7 @@
                 const fixedItems4 = [
                     `Abraçadeira de velcro para rack(s) de backbone (rolo 3m): ${abracadeiraVelcroBackbones }`,
                     `Abraçadeira Hellermann conjunto com 100 Unidades para rack(s) de backbone: ${abracadeiraHellermanBackbones}`,
-                    `Filtro de linha com 08 tomadas para rack(s) de backbone: ${filtroDeLihnaBackbones}`,
+                    `Filtro de linha com 06 tomadas para rack(s) de backbone: ${filtroDeLihnaBackbones}`,
                     `Etiquetas para rack(s) de backbone: ${etiquestasRacksBackbone}`,
                     `total de rack(s) de backbone: ${totaRacksBackbone} `
                 ];
