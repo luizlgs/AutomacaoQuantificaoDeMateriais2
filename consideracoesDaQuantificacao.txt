@@ -4,4 +4,3 @@ os cabos de dados e cftv na malha horizontal terão as mesmas cores
 estão sendo consideradas todas as portas, ate as que não estão sendo usadas para a quantificação das etiquetas
 os DVRS possuem 2u de altura no rack
 sera considerado DVRs com suporte para 8 câmeras
-O input "quantidade de backbones por andar" é inutil
