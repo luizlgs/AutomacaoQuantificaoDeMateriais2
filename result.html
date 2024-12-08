@@ -141,7 +141,7 @@
                 var racks = 0;
 
                 var numDVR = Math.ceil((data['cftv']*data['pavimentos'])/8);
-                var tamRackTot = (Math.ceil((data['dados']+data['voip'])/24)*2) + Math.ceil(data['cftv']/8)*2 + Math.ceil(((Math.ceil((data['dados']+data['voip'])/24)*2) + Math.ceil(data['cftv']/8)*2)/2); //valor ja com o acrescimo de 50% e dvr com o tamanho de 2u
+                var tamRackTot = (Math.ceil(data['dados']/24)*2) + (Math.ceil(data['voip']/24)*2) + (Math.ceil(data['cftv']/8)*2) + Math.ceil(((Math.ceil(data['dados']/24)*2) + (Math.ceil(data['voip']/24)*2) + (Math.ceil(data['cftv']/8)*2))/2); //valor ja com o acrescimo de 50% e dvr com o tamanho de 2u
                 var tamUnidRack = 0;
 
                 //calcula a quantidade total de Us para calculo do parafuso porca gaiola
@@ -296,7 +296,7 @@
                     `Etiqueta identificação do cabo de malha horizontal: ${etiquetasCabosMalhaHorizontal} unidade(s)`,
                     `PPMH (Patch Panel de Malha Horizontal): ${ppmh} unidade(s)`,
                     `Organizador frontal de cabo - Tipo - (Unidade de altura e largura 19 polegadas): ${organizadorFrontalDeCabos} unidade(s)`,
-                    `DVRs com suporte para 8 câmeras: ${numDVR} unidade(s)`,
+                    `DVRs tamanho 2u com suporte para 8 câmeras: ${numDVR} unidade(s)`,
                     `Etiquetas de identificação de portas do Patch Panel: ${etiquetasParaIdentificacaoDePortas} unidade(s)`,
                     `Cordão de Ligação, flexível, (Patch Cable), (categoria ${data['categoria']}), (Tamanho: 2m), (cor: azul): ${cordaoPatchCableAzul} unidade(s)`,
                     `Cordão de Ligação, flexível, (Patch Cable), (categoria ${data['categoria']}), (Tamanho: 2m), (cor: amarelo): ${cordaoPatchCableAmarelo} unidade(s)`,
