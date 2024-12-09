@@ -141,7 +141,7 @@
                 var racks = 0;
 
                 var numDVR = Math.ceil((data['cftv']*data['pavimentos'])/8);
-                var tamRackTot = (Math.ceil(data['dados']/24)*4) + (Math.ceil(data['voip']/24)*2) + (Math.ceil(data['cftv']/8)*2) + Math.ceil(((Math.ceil(data['dados']/24)*2) + (Math.ceil(data['voip']/24)*2) + (Math.ceil(data['cftv']/8)*2))/2); //valor ja com o acrescimo de 50% e dvr com o tamanho de 2u
+                var tamRackTot = (Math.ceil(data['dados']/24)*4) + (Math.ceil(data['voip']/24)*2) + (Math.ceil(data['cftv']/8)*2) + Math.ceil(((Math.ceil(data['dados']/24)*4) + (Math.ceil(data['voip']/24)*2) + (Math.ceil(data['cftv']/8)*2))/2); //valor ja com o acrescimo de 50% e dvr com o tamanho de 2u
                 var tamUnidRack = 0;
 
                 //calcula a quantidade total de Us para calculo do parafuso porca gaiola
