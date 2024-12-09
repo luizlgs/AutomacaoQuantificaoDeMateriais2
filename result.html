@@ -288,8 +288,8 @@
                 
                 const fixedItems = [
                     `Tomada RJ 45 Fêmea (categoria ${data['categoria']}): ${tomadasRj45} unidade(s)`,
-                    `Cordão de ligação (Patch Cord), ${data['distanciaMH']} metros, (categoria ${data['categoria']}), (cor: azul): ${cordaoDeLigaçãoAzul} unidade(s)`,
-                    `Cordão de ligação (Patch Cord), ${data['distanciaMH']} metros, (categoria ${data['categoria']}), (cor: mesma do teto): ${cordaoDeLigaçãoCFTV} unidade(s)`,
+                    `Cordão de ligação (Patch Cord), 3 metros, (categoria ${data['categoria']}), (cor: azul): ${cordaoDeLigaçãoAzul} unidade(s)`,
+                    `Cordão de ligação (Patch Cord), 3 metros, (categoria ${data['categoria']}), (cor: mesma do teto): ${cordaoDeLigaçãoCFTV} unidade(s)`,
                     `Espelho de conexão (Tamanho 2x4): ${EspelhoDeConexao} unidade(s)`,
                     `Etiquetas para identificação de tomadas e espelho: ${etiquetasParaTomadasEEspelhos} unidade(s)`,
                     `Cabo UTP rígido (categoria ${data['categoria']}): ${caixasCaboUTP} caixa(s)`,
@@ -318,7 +318,7 @@
 
                 const fixedItems2 = [
                     `DIO 24 fibras (Unid.): ${numDiosPrimario} `,
-                    `Caixas de emenda (Unid.): ${caixaDeEmenda}`,
+                    `Caixas de emenda ${data['paresFibras'] * 2} (Unid.): ${caixaDeEmenda}`,
                     `Pigtail ${data['caboFibra']} 50x125 simples LC (Unid.): ${pigtailsPrimarios}`,
                     `Acoplador óptico 50x125 LC duplo azul (Unid.): ${acopladorOpticoPrimario}`,
                     `Cordão óptico 50x125 simples LC (Unid): ${cordaoOpticoPrimario}`,
