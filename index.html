@@ -89,19 +89,27 @@
     </style>
 </head>
 <body>
-    <div class="form-container">
+    <div style="width: 40%;" id="divprincipal" class="form-container">
         <h2>Automação da quantificação de dados de infraestrutura</h2>
         
         <div class="form-section">
             <h3>Malha Horizontal</h3>
 
-            <label for="dados">Quantidade de pontos de dados por andar:</label>
+            <label>Cálculo de matériais para</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="andarunicooutipo" value="tipo" onclick="toggleNPavimentos(true)" required>Andares tipo</label>
+                    <label><input type="radio" name="andarunicooutipo" value="unico"onclick="toggleNPavimentos(false)" checked="checked" required>Andar único</label>
+                </div>
+            <label for="pavimentos" id="label-pavimentos" style="display: none;">Número de andares tipo da edificação:</label>
+            <input type="number" id="pavimentos" name="pavimentos" min="0" style="display: none;" value="1" required>
+
+            <label for="dados" id="dadoslabel">Quantidade de pontos de dados no andar:</label>
             <input type="number" id="dados" name="dados" min="0" required>
 
-            <label for="cftv">Quantidade de pontos CFTV por andar:</label>
+            <label for="cftv" id="cftvlabel">Quantidade de pontos CFTV no andar:</label>
             <input type="number" id="cftv" name="cftv" min="0" required>
 
-            <label for="voip">Quantidade de pontos Voip por andar:</label>
+            <label for="voip" id="voiplabel">Quantidade de pontos Voip no andar:</label>
             <input type="number" id="voip" name="voip" min="0" required>
 
             <label for="distanciaMH">Medida básica para cálculo da distância da MH:</label>
@@ -124,50 +132,50 @@
                 <option value="nao">Não</option>
             </select>
 
-            <label for="pavimentos">Número de andares tipo da edificação:</label>
-            <input type="number" id="pavimentos" name="pavimentos" min="0" required>
-        </div>
-
-        <div class="form-section">
-            <h3>Backbone Primário</h3>
-
-            <label for="paresFibras">Número de pares de fibras que ficarão disponíveis:</label>
-            <input type="number" id="paresFibras" name="paresFibras" min="0" required>
-
-            <label for="distanciaBackbone">Medida básica para cálculo dos lances de cabo backbone:</label>
-            <input type="number" id="distanciaBackbone" name="distanciaBackbone" min="0" required>
-
-            <label for="caboFibra">Especificação do cabo de fibra óptica:</label>
-            <select id="caboFibra" name="caboFibra" required>
-                <option value="">Selecione</option>
-                <option value="monomodo">Monomodo</option>
-                <option value="multimodo">Multimodo</option>
-            </select>
-
-            <label for="caracteristicaFibra">Característica da fibra óptica:</label>
-            <select id="caracteristicaFibra" name="caracteristicaFibra" required>
-                <option value="">Selecione</option>
-                <option value="OM1">OM1</option>
-                <option value="OM2">OM2</option>
-                <option value="OM3">OM3</option>
-                <option value="OM4">OM4</option>
-            </select>
-
-            <label>Verificação da existência de backbone primário e/ou secundário:</label>
+            <label>Verificação da existência de backbone secundário:</label>
             <div class="radio-group">
                 <label><input type="radio" name="backboneExistente" value="sim" onclick="toggleBackboneSecundario(true)" required>Sim</label>
                 <label><input id="nao" type="radio" name="backboneExistente" value="nao"checked= "checked" onclick="toggleBackboneSecundario(false)" required>Não</label>
             </div>
+
+        </div>
+
+        <div id="backboneprimarioexistente" style="display: none;" class="form-section">
+            <h3 id="bp">Backbone Primário</h3>
+
+            <label for="paresFibras">Número de pares de fibras que ficarão disponíveis:</label>
+            <input type="number" id="paresFibras" name="paresFibras" min="0" value="0" required>
+
+            <label for="distanciaBackbone">Medida básica para cálculo dos lances de cabo backbone:</label>
+            <input type="number" id="distanciaBackbone" name="distanciaBackbone" value="0" min="0" required>
+
+            <label for="caboFibra">Especificação do cabo de fibra óptica:</label>
+            <select id="caboFibra" name="caboFibra" required>
+                <option value="multimodo">Multimodo</option>
+                <option value="monomodo">Monomodo</option>
+            </select>
+
+            <label for="caracteristicaFibra">Característica da fibra óptica:</label>
+            <select id="caracteristicaFibra" name="caracteristicaFibra" required>
+                <option value="OM4">OM4</option>
+                <option value="OM3">OM3</option>
+                <option value="OM2">OM2</option>
+                <option value="OM1">OM1</option>
+            </select>
         </div>
 
 
         <div class="form-section backbone-secundario">
-            <h3>Backbone Secundário</h3>
+            <h3 id="bs">Backbone Secundário</h3>
         
             <label for="caboFibraSecundario">Especificação do cabo de fibra óptica secundário:</label>
             <select id="caboFibraSecundario" name="caboFibraSecundario">
                 <option value="monomodo">Monomodo</option>
             </select>
+            
+            <label for="paresFibrasSM">Número de pares de fibras que ficarão disponíveis no cabo óptico:</label>
+            <input type="number" id="paresFibrasSM" name="paresFibrasSM" min="0" value="0" required>
+
             <label for="distanciaPredios">Distancia entre os prédios (m)</label>
             <input type="number" id="distanciaPredios" name="distanciaPredios" min="0" value="0" required>
         </div>
@@ -178,8 +186,47 @@
     <script>
         function toggleBackboneSecundario(isVisible) {
             const secundarioSection = document.querySelector('.backbone-secundario');
+            const divprincipal = document.getElementById('divprincipal');
             secundarioSection.style.display = isVisible ? 'block' : 'none';
+            divprincipal.style.width = "100%";
         }
+
+        function toggleNPavimentos(show) {
+            const pavimentosLabel = document.getElementById('label-pavimentos');
+            const pavimentosInput = document.getElementById('pavimentos');
+            const dados = document.getElementById('dadoslabel');
+            const voip = document.getElementById('voiplabel');
+            const cftv = document.getElementById('cftvlabel');
+            const bac = document.getElementById('backboneprimarioexistente');
+            const divprincipal = document.getElementById('divprincipal');
+            const backboneprimario = document.getElementById('bp');
+            const backbonesecundario = document.getElementById('bs');
+
+            if (pavimentosLabel && pavimentosInput) {
+                const displayStyle = show ? 'block' : 'none';
+                pavimentosLabel.style.display = displayStyle;
+                pavimentosInput.style.display = displayStyle;
+                bac.style.display = displayStyle;
+                divprincipal.style.width = "100%";
+                dados.innerText = "Quantidade de pontos de dados em cada andar:";
+                voip.innerText = "Quantidade de pontos Voip em cada andar:";
+                cftv.innerText = "Quantidade de pontos CFTV em cada andar:";
+                backboneprimario.innerText = "Backbone secundário";
+                backbonesecundario.innerText = "Backbone primário";
+                pavimentosInput.value = "2";
+            }
+                
+            if (!show) {
+                pavimentosInput.value = 1; // Define o valor como 1 para "Andar único"
+                divprincipal.style.width = "40%";
+                dados.innerText = "Quantidade de pontos de dados no andar:";
+                voip.innerText = "Quantidade de pontos Voip no andar:";
+                cftv.innerText = "Quantidade de pontos CFTV no andar:";
+            }
+            
+        }
+
+        
 
         function submitForm() {
     const formElements = document.querySelectorAll('input[required], select[required]');
@@ -199,6 +246,12 @@
         formElements.forEach(element => {
             data[element.name] = element.value;
         });
+
+        // Adiciona o valor do botão de rádio selecionado (andarunicooutipo)
+        const selectedRadio1 = document.querySelector('input[name="andarunicooutipo"]:checked');
+        if (selectedRadio1) {
+            data['andarunicooutipo'] = selectedRadio1.value;
+        }
 
         // Adiciona o valor do botão de rádio selecionado (backboneExistente)
         const selectedRadio = document.querySelector('input[name="backboneExistente"]:checked');

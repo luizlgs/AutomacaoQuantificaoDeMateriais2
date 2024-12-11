@@ -96,7 +96,7 @@
 
             <!-- Miscelânea -->
             <div class="result-section" id="miscelaneaResults">
-                <h3>Miscelânea do backbone</h3>
+                <h3>Miscelânea de backbone</h3>
                 <div class="result-item" id="miscelaneaResultsDisplay"></div>
             </div>
         </div>
@@ -126,12 +126,14 @@
                 var etiquetasParaTomadasEEspelhos = tomadasRj45 + EspelhoDeConexao;
                 var caixasCaboUTP = Math.ceil((data['dados']+data['cftv']+data['voip'])*data['distanciaMH']/305) * data['pavimentos'];
                 var etiquetasCabosMalhaHorizontal = (data['dados']+data['cftv']+data['voip'])*2 * data['pavimentos'];
-                var ppmh = Math.ceil(((data['dados']+data['voip'])*data['pavimentos'])/24);
+                var ppmh = Math.ceil((((data['dados']+data['voip'])+data['cftv'])*data['pavimentos'])/24);
                 var organizadorFrontalDeCabos = ppmh;
                 var etiquetasParaIdentificacaoDePortas = ppmh*24; //também foram consideradas as portas que não estão sendo usadas
                 var cordaoPatchCableAzul = data['dados'] * data['pavimentos'];
                 var cordaoPatchCableAmarelo = data['voip'] * data['pavimentos'];
                 var cordaoPatchCableVermelho = data['cftv'] * data['pavimentos'];
+
+                var sw = Math.ceil((data['dados']+data['cftv']+data['voip'])/24);
 
                 /*
                 calculo de racks
@@ -141,8 +143,15 @@
                 var racks = 0;
 
                 var numDVR = Math.ceil((data['cftv'])/48)*data['pavimentos'];
-                var tamRackTot = ((Math.ceil(data['dados']/24)*3) + (Math.ceil(data['voip']/24)*3)) + (Math.ceil(data['cftv']/48)*3) + Math.ceil((((Math.ceil(data['dados']/24)*3) + (Math.ceil(data['voip']/24)*3)) + (Math.ceil(data['cftv']/48)*3))/2); //valor ja com o acrescimo de 50% e dvr com o tamanho de 2u
+                var tamRackTot = (Math.ceil(data['dados']/24) + Math.ceil(data['voip']/24) + Math.ceil(data['cftv']/48))*4 + Math.ceil(((Math.ceil(data['dados']/24) + Math.ceil(data['voip']/24) + Math.ceil(data['cftv']/48))*4)/2); //valor ja com o acrescimo de 50% e dvr com o tamanho de 2u
                 var tamUnidRack = 0;
+
+                //calculo rack backbone primario (sera considerado o espaço para DIOS)
+                var tamRacksBackbonePrimario = Math.ceil((data['pavimentos'] * data['paresFibras'] * 2)/24) + (Math.ceil(Math.ceil((data['pavimentos'] * data['paresFibras'] * 2)/24)/2));
+                if(tamRacksBackbonePrimario%4!=0){
+                        for(var i = tamRacksBackbonePrimario; i%4!=0; i++){}
+                        tamRacksBackbonePrimario = i;
+                }
 
                 //calcula a quantidade total de Us para calculo do parafuso porca gaiola
                 var totalU = tamRackTot;
@@ -184,16 +193,47 @@
                     arr.push(" "+tamUnidRack.toString()+"u");
                     arr2 = arr.toString();
                 }
+
+                var arrBackbone = arr.concat();
+                var x = arrBackbone.toString().substr(arrBackbone.toString().length-3);
+                x = parseInt(x.slice(0, -1));
+
+                while(true) {
+                    if(x+tamRacksBackbonePrimario<=48) {
+                        x+= tamRacksBackbonePrimario;
+                        if((x+tamRacksBackbonePrimario)%4!=0){
+                            for(; x%tamRacksBackbonePrimario%4!=0; x++){}
+                        }
+                        arrBackbone.pop();
+                        arrBackbone.push(" "+x+"u");
+                        break;
+                    }
+                    else {
+                        x -= 48-x;
+                        arrBackbone.pop();
+                        arrBackbone.push(" "+48+"u");
+                    }
+                }
+                
+                
                 
 
+                if (data['pavimentos'] == 1) {
+                    var existenciaAndarTipo = "";
+                    var configAndarBackbone = "O andar possuirá "+arr.length+" rack(s) com a seguinte configuração: "+arr.toString();
+                }
+                else {
+                    var existenciaAndarTipo = "Cada andar tipo possuirá "+arr.length+" rack(s) com a seguinte configuração: "+arr.toString();                
+                    configAndarBackbone = "O andar com o backbone interno possuirá "+arrBackbone.length+" rack(s) com a seguinte configuração: "+arrBackbone.toString();
+                }
 
                 var organizadoresLaterais = racks*2*data['pavimentos'];
                 var bandejasFixas = racks*data['pavimentos'];
                 var bandejasDeslizantes = numDVR; //um para cada dvr
-                var parafusoPorcaGaiola = Math.ceil((totalU*4*data['pavimentos'])/10);
+                var parafusoPorcaGaiola = Math.ceil(((tamRackTot+tamRacksBackbonePrimario)*4*data['pavimentos'])/10);
                 var abracadeiraVelcro = racks*data['pavimentos'];
                 var abracadeiraHellerman = racks*data['pavimentos'];
-                var filtrosDeLinha = Math.ceil(numDVR/6); //um a cada 6 DVRs
+                var filtrosDeLinha = Math.ceil((numDVR+sw)/6); //um a cada 6 DVRs
                 var etiquetasParaRacks = racks*data['pavimentos'];
 
                 var etiquetasParaPatchCables = tomadasRj45*2;
@@ -207,21 +247,21 @@
 
                 var numDiosPrimario = Math.ceil((data['pavimentos'] * data['paresFibras'] * 2)/24);
                 var caixaDeEmenda = numDiosPrimario * 2; //duas caixas de emenda por DIO
-                var pigtailsPrimarios = data['pavimentos'] * data['paresFibras'] * 2;
-                var acopladorOpticoPrimario = (data['pavimentos'] * data['paresFibras'] * 2)/2; //metade do numero de fibras totais
-                var cordaoOpticoPrimario = data['pavimentos'] * data['paresFibras'] * 2; //mesmo valor do numero de fibras totais
+                var pigtailsPrimarios = data['pavimentos'] * data['paresFibras'];
+                var acopladorOpticoPrimario = data['pavimentos'] * data['paresFibras'] /2; //metade do numero de fibras totais
+                var cordaoOpticoPrimario = data['pavimentos'] * data['paresFibras'] /2; //mesmo valor do numero de fibras totais
+                var especFibra = "";
+                if (data['caboFibra'] === "Multimodo") {
+                    especFibra = "MM";
+                }
+                else {
+                    especFibra = "SM"
+                }
 
                 //calculo cabo optico multimodo de backbone
                 var caboOpticoInterno = 0;
                 for (var i = 1; i<data['pavimentos']; i++){
                     caboOpticoInterno += (data['distanciaBackbone'] * i) + 1;
-                }
-
-                //calculo rack backbone primario (sera considerado o espaço para DIOS)
-                var tamRacksBackbonePrimario = numDiosPrimario + (Math.ceil(numDiosPrimario/2));
-                if(tamRacksBackbonePrimario%4!=0){
-                        for(var i = tamRacksBackbonePrimario; i%4!=0; i++){}
-                        tamRacksBackbonePrimario = i;
                 }
 
 
@@ -244,12 +284,12 @@
                     distanciaPredios = 0;
                 }
 
-                var numDiosSecundario = Math.ceil((data['paresFibras'] * 2)/24);
+                var numDiosSecundario = Math.ceil((data['paresFibrasSM'] * 2)/24)*2;
                 var caixaDeEmendaSecundario = numDiosSecundario * 2; //duas caixas de emenda por DIO
-                var pigtailsSecundarios = data['paresFibras'] * 2;
-                var acopladorOpticoSecundario = data['paresFibras'];
-                var cordaoOpticoSecundario =  data['paresFibras'] * 2;
-                var caboOpticoExterno = distanciaPredios;
+                var pigtailsSecundarios = data['paresFibrasSM'] * 2 * 2;
+                var acopladorOpticoSecundario = data['paresFibrasSM'] * 2;
+                var cordaoOpticoSecundario =  data['paresFibrasSM'] * 2;
+                var caboOpticoExterno = distanciaPredios+(distanciaPredios/10);
 
                 //calculo rack backbone secundario (sera considerado o espaço para DIOS)
                 var tamRacksBackboneSecundario = numDiosSecundario + (Math.ceil(numDiosSecundario/2));
@@ -303,8 +343,9 @@
                     `Cordão de Ligação, flexível, (Patch Cable), (categoria ${data['categoria']}), (Tamanho: 2m), (cor: vermelho): ${cordaoPatchCableVermelho} unidade(s)`,
 
                     `Rack(s) (${fechadoouaberto}) = ${arr.length*data['pavimentos']} unidade(s)`, 
-                    `Cada andar possuirá ${arr.length} rack(s) com a seguinte configuração: ${arr2}`,
-                    
+                    `${existenciaAndarTipo}`,
+                    `${configAndarBackbone}`,
+
                     `Organizador lateral para Rack (Para os tamanhos correspondentes): ${organizadoresLaterais} unidade(s)`,
                     `Bandeja fixa - 19" de largura: ${bandejasFixas} unidade(s)`,
                     `Bandeja deslizante - 19" de largura: ${bandejasDeslizantes} unidade(s)`,
@@ -316,15 +357,20 @@
                     `Etiquetas para identificação dos patch Cables: ${etiquetasParaPatchCables} unidade(s)`
                 ];
 
-                const fixedItems2 = [
-                    `DIO 24 fibras (Unid.): ${numDiosPrimario} `,
-                    `Caixas de emenda ${data['paresFibras'] * 2} fibras (Unid.): ${caixaDeEmenda}`,
-                    `Pigtail ${data['caboFibra']} 50x125 simples LC (Unid.): ${pigtailsPrimarios}`,
-                    `Acoplador óptico 50x125 LC duplo azul (Unid.): ${acopladorOpticoPrimario}`,
-                    `Cordão óptico 50x125 simples LC (Unid): ${cordaoOpticoPrimario}`,
-                    `Cabo Óptico ${data['caboFibra']} 50x125 Tight Buffer ${data['paresFibras'] * 2} fibras (metros): ${caboOpticoInterno}`,
-                    `Rack(s) de ${tamRacksBackbonePrimario}u (Unid.): ${1}`
-                ];
+                const fixedItems2 = [];
+                if(data['pavimentos']>1){
+                    fixedItems2.push(
+                        `DIO 24 fibras (Unid.): ${numDiosPrimario} `,
+                        `Caixas de emenda ${data['paresFibras'] * 2} fibras (Unid.): ${caixaDeEmenda}`,
+                        `Pigtail ${data['caboFibra']} 50x125 simples LC (Unid.): ${pigtailsPrimarios}`,
+                        `Acoplador óptico 50x125 LC duplo azul (Unid.): ${acopladorOpticoPrimario}`,
+                        `Cordão óptico 50x125 LC duplo (Unid): ${cordaoOpticoPrimario}`,
+                        `Cabo Óptico ${data['caboFibra']} 50x125 Tight Buffer ${data['paresFibras'] * 2} fibras (metros): ${caboOpticoInterno}`,
+                    );
+                }
+                else {
+                    fixedItems2.push(`Backbone Primário Inexistente`)
+                }
 
                 const fixedItems3 = [];
 
@@ -340,20 +386,26 @@
                         `DIO 24 fibras(Unid.): ${numDiosSecundario}`,
                         `Caixa de emenda (Unid.): ${caixaDeEmendaSecundario}`,
                         `Pigtail SM 9x125 simples LC (Unid.): ${pigtailsSecundarios}`,
-                        `Acoplador óptico 9x125 LC azul (Unid.): ${acopladorOpticoSecundario}`,
-                        `Cordão óptico 9x125 simples LC (Unid.): ${cordaoOpticoSecundario}`,
-                        `Cabo Óptico Monomodo 50x125 Tight Buffer ${data['paresFibras'] * 2} fibras (metros): ${caboOpticoExterno}`,
-                        `Rack(s) ${tamRacksBackboneSecundario}u (Unid.): 1`
+                        `Acoplador óptico 9x125 LC duplo azul (Unid.): ${acopladorOpticoSecundario}`,
+                        `Cordão óptico 9x125 duplo LC duplo (Unid.): ${cordaoOpticoSecundario}`,
+                        `Cabo Óptico Monomodo 50x125 Tight Buffer ${data['paresFibrasSM'] * 2} fibras (metros): ${caboOpticoExterno}`,
+                        `Rack(s) ${tamRacksBackboneSecundario}u (Unid.): 2`
                         );
                 }
 
-                const fixedItems4 = [
-                    `Abraçadeira de velcro para rack(s) de backbone (rolo 3m): ${abracadeiraVelcroBackbones }`,
-                    `Abraçadeira Hellermann conjunto com 100 Unidades para rack(s) de backbone: ${abracadeiraHellermanBackbones}`,
-                    `Filtro de linha com 06 tomadas para rack(s) de backbone: ${filtroDeLihnaBackbones}`,
-                    `Etiquetas para rack(s) de backbone: ${etiquestasRacksBackbone}`,
-                    `total de rack(s) de backbone: ${totaRacksBackbone} `
-                ];
+                const fixedItems4 = [];
+                if(data['backboneExistente'] === "sim" || data['andarunicooutipo'] === "tipo"){
+                    fixedItems4.push(
+                        `Abraçadeira de velcro para rack(s) de backbone (rolo 3m): ${abracadeiraVelcroBackbones }`,
+                        `Abraçadeira Hellermann conjunto com 100 Unidades para rack(s) de backbone: ${abracadeiraHellermanBackbones}`,
+                        `Filtro de linha com 06 tomadas para rack(s) de backbone: ${filtroDeLihnaBackbones}`,
+                        `Etiquetas para rack(s) de backbone: ${etiquestasRacksBackbone}`,
+                        `total de rack(s) de backbone: ${totaRacksBackbone} `
+                    );
+                }
+                else {
+                    fixedItems4.push(`Miscelânea do backbone inexistente`)
+                }
                 
 
                 
