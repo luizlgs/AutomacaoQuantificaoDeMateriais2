@@ -147,7 +147,7 @@
                 var tamUnidRack = 0;
 
                 //calculo rack backbone primario (sera considerado o espaço para DIOS)
-                var tamRacksBackbonePrimario = Math.ceil((data['pavimentos'] * data['paresFibras'] * 2)/24) + (Math.ceil(Math.ceil((data['pavimentos'] * data['paresFibras'] * 2)/24)/2));
+                var tamRacksBackbonePrimario = Math.ceil(((data['pavimentos']-1) * data['paresFibras'] * 2)/24) + (Math.ceil(Math.ceil(((data['pavimentos']-1) * data['paresFibras'] * 2)/24)/2));
                 if(tamRacksBackbonePrimario%4!=0){
                         for(var i = tamRacksBackbonePrimario; i%4!=0; i++){}
                         tamRacksBackbonePrimario = i;
@@ -159,7 +159,6 @@
                     totalU++;
                 }
                         
-
                 var arr = [];
                 var arr2 = "";
                 if (tamRackTot <= 48) { //considerando um tamanho maximo para o rack como 48u
@@ -167,11 +166,11 @@
                     if(tamRackTot%4!=0){
                         for(var i = tamRackTot; i%4!=0; i++){}
                         arr2 = i.toString()+"u";
-                        arr.push(tamRackTot.toString())+"u";
+                        arr.push((i.toString())+"u");
                     }
                     else {
                         arr2 = tamRackTot.toString()+"u";
-                        arr.push(tamRackTot.toString());
+                        arr.push(tamRackTot.toString()+"u");
                         
                     }
                 }
@@ -183,7 +182,7 @@
                         tamUnidRack = i;
                     }
                     else {
-                        tamUnidRack = tamRackTot;
+                        tamUnidRack = tamRackTot - (48*(racks-1));
                     }
                     var maxrack = 48;
                     for (var i = 0; i<racks-1; i++){
@@ -191,31 +190,38 @@
                         
                     }
                     arr.push(" "+tamUnidRack.toString()+"u");
-                    arr2 = arr.toString();
+                    arr2 = arr.toString()+"u";
                 }
 
                 var arrBackbone = arr.concat();
                 var x = arrBackbone.toString().substr(arrBackbone.toString().length-3);
-                x = parseInt(x.slice(0, -1));
+                x = parseInt(x.slice(0, -1)); //ultimo hack da lista de racks dos andares tipo
+
 
                 while(true) {
                     if(x+tamRacksBackbonePrimario<=48) {
                         x+= tamRacksBackbonePrimario;
-                        if((x+tamRacksBackbonePrimario)%4!=0){
-                            for(; x%tamRacksBackbonePrimario%4!=0; x++){}
+                        if(x%4!=0){
+                            for(; x%4!=0; x++){}
                         }
                         arrBackbone.pop();
                         arrBackbone.push(" "+x+"u");
                         break;
                     }
                     else {
-                        if(x<=48) {
-                            arrBackbone.push(" "+x+"u");
-                            break;
+                        if(x<48){
+                            arrBackbone.pop();
+                            arrBackbone.push(" "+48+"u");
+                            tamRacksBackbonePrimario -= 48-x;
                         }
-                        x -= 48-x;
-                        arrBackbone.pop();
-                        arrBackbone.push(" "+48+"u");
+                        else{
+                            for(;tamRacksBackbonePrimario>48;){
+                                arrBackbone.push(" "+48+"u");
+                                tamRacksBackbonePrimario -= 48;
+                            }
+                            arrBackbone.push(" "+tamRacksBackbonePrimario+"u")
+                        }
+                        break;
                     }
                 }
                 
@@ -249,11 +255,11 @@
                 //Backbone Primario
                 //todos os DIOS terão suporte a 24 fibras
 
-                var numDiosPrimario = Math.ceil((data['pavimentos'] * data['paresFibras'] * 2)/24);
+                var numDiosPrimario = Math.ceil(((data['pavimentos']-1) * data['paresFibras'] * 2)/24);
                 var caixaDeEmenda = numDiosPrimario * 2; //duas caixas de emenda por DIO
-                var pigtailsPrimarios = data['pavimentos'] * data['paresFibras'];
-                var acopladorOpticoPrimario = data['pavimentos'] * data['paresFibras'] /2; //metade do numero de fibras totais
-                var cordaoOpticoPrimario = data['pavimentos'] * data['paresFibras'] /2; //mesmo valor do numero de fibras totais
+                var pigtailsPrimarios = (data['pavimentos']-1) * data['paresFibras'];
+                var acopladorOpticoPrimario = (data['pavimentos']-1) * data['paresFibras'] /2; //metade do numero de fibras totais
+                var cordaoOpticoPrimario = (data['pavimentos']-1) * data['paresFibras'] /2; //mesmo valor do numero de fibras totais
                 var especFibra = "";
                 if (data['caboFibra'] === "Multimodo") {
                     especFibra = "MM";
