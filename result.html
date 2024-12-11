@@ -209,6 +209,10 @@
                         break;
                     }
                     else {
+                        if(x<=48) {
+                            arrBackbone.push(" "+x+"u");
+                            break;
+                        }
                         x -= 48-x;
                         arrBackbone.pop();
                         arrBackbone.push(" "+48+"u");
