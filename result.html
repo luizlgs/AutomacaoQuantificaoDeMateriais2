@@ -127,7 +127,7 @@
                 var caixasCaboUTP = Math.ceil((data['dados']+data['cftv']+data['voip'])*data['distanciaMH']/305) * data['pavimentos'];
                 var etiquetasCabosMalhaHorizontal = (data['dados']+data['cftv']+data['voip'])*2 * data['pavimentos'];
                 var ppmh = Math.ceil((((data['dados']+data['voip'])+data['cftv'])*data['pavimentos'])/24);
-                var organizadorFrontalDeCabos = ppmh;
+                var organizadorFrontalDeCabos = ppmh*2;
                 var etiquetasParaIdentificacaoDePortas = ppmh*24; //também foram consideradas as portas que não estão sendo usadas
                 var cordaoPatchCableAzul = data['dados'] * data['pavimentos'];
                 var cordaoPatchCableAmarelo = data['voip'] * data['pavimentos'];
@@ -213,6 +213,8 @@
                             arrBackbone.pop();
                             arrBackbone.push(" "+48+"u");
                             tamRacksBackbonePrimario -= 48-x;
+                            x = 48;
+                            continue;
                         }
                         else{
                             for(;tamRacksBackbonePrimario>48;){
@@ -220,8 +222,8 @@
                                 tamRacksBackbonePrimario -= 48;
                             }
                             arrBackbone.push(" "+tamRacksBackbonePrimario+"u")
+                            break;
                         }
-                        break;
                     }
                 }
                 
@@ -282,7 +284,7 @@
                     var fechadoouaberto = 'fechado';
                 }
 
-                var numRacksPrimario = 1;
+                var numRacksPrimario = 0;
 
 
 
@@ -307,16 +309,16 @@
                         for(var i = tamRacksBackboneSecundario; i%4!=0; i++){}
                         tamRacksBackboneSecundario = i;
                 }
+
+                if(tamRacksBackboneSecundario<48){
+                    tamRacksBackboneSecundario = 48;
+                }
                 
                 var numRacksSecundario = 0;
                 if(distanciaPredios > 0){
-                    numRacksSecundario = 1;
-                } 
+                    numRacksSecundario = 2;
+                }
                 
-                
-                 
-                
-
 
 
 
@@ -324,11 +326,12 @@
                 //miscelanea backbone
                 var abracadeiraVelcroBackbones = numRacksPrimario + numRacksSecundario;
                 var abracadeiraHellermanBackbones = numRacksPrimario + numRacksSecundario;
-                var filtroDeLihnaBackbones = Math.ceil((numDiosPrimario+numDiosSecundario)/6); //um a cada 6 DIOs
+                var filtroDeLihnaBackbones = Math.ceil(numDiosPrimario/6) + Math.ceil(numDiosSecundario/6); //um a cada 6 DIOs em cada rack de backbone
                 var etiquestasRacksBackbone = numRacksPrimario + numRacksSecundario;
                 var totaRacksBackbone = numRacksPrimario + numRacksSecundario;
+                
 
-                // Agora você pode usar o objeto data como desejar
+
                 console.log(data); // Exibe os dados no console
                 // Adicionar itens fixos na seção de Malha Horizontal
 
@@ -394,7 +397,7 @@
                     miscelaniabackbone = 1;
                         fixedItems3.push(
                         `DIO 24 fibras(Unid.): ${numDiosSecundario}`,
-                        `Caixa de emenda (Unid.): ${caixaDeEmendaSecundario}`,
+                        `Caixa de emenda ${data['paresFibrasSM']} fibras (Unid.): ${caixaDeEmendaSecundario}`,
                         `Pigtail SM 9x125 simples LC (Unid.): ${pigtailsSecundarios}`,
                         `Acoplador óptico 9x125 LC duplo azul (Unid.): ${acopladorOpticoSecundario}`,
                         `Cordão óptico 9x125 duplo LC duplo (Unid.): ${cordaoOpticoSecundario}`,
@@ -409,8 +412,7 @@
                         `Abraçadeira de velcro para rack(s) de backbone (rolo 3m): ${abracadeiraVelcroBackbones }`,
                         `Abraçadeira Hellermann conjunto com 100 Unidades para rack(s) de backbone: ${abracadeiraHellermanBackbones}`,
                         `Filtro de linha com 06 tomadas para rack(s) de backbone: ${filtroDeLihnaBackbones}`,
-                        `Etiquetas para rack(s) de backbone: ${etiquestasRacksBackbone}`,
-                        `total de rack(s) de backbone: ${totaRacksBackbone} `
+                        `Etiquetas para rack(s) de backbone: ${etiquestasRacksBackbone}`
                     );
                 }
                 else {
