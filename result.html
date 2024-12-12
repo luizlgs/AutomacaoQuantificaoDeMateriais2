@@ -263,11 +263,11 @@
 
                 var numDiosPrimario = Math.ceil(((data['pavimentos']-1) * data['paresFibras'] * 2)/24);
                 var caixaDeEmenda = numDiosPrimario * 2; //duas caixas de emenda por DIO
-                var pigtailsPrimarios = (data['pavimentos']-1) * data['paresFibras'];
-                var acopladorOpticoPrimario = (data['pavimentos']-1) * data['paresFibras'] /2; //metade do numero de fibras totais
-                var cordaoOpticoPrimario = (data['pavimentos']-1) * data['paresFibras'] /2; //mesmo valor do numero de fibras totais
+                var pigtailsPrimarios = (data['pavimentos']-1) * data['paresFibras']*2;
+                var acopladorOpticoPrimario = (data['pavimentos']-1) * data['paresFibras']; //metade do numero de fibras totais
+                var cordaoOpticoPrimario = (data['pavimentos']-1) * data['paresFibras']; //mesmo valor do numero de fibras totais
                 var especFibra = "";
-                if (data['caboFibra'] === "Multimodo") {
+                if (data['caboFibra'] == '2') {
                     especFibra = "MM";
                 }
                 else {
@@ -379,10 +379,10 @@
                     fixedItems2.push(
                         `DIO 24 fibras (Unid.): ${numDiosPrimario} `,
                         `Caixas de emenda ${data['paresFibras'] * 2} fibras (Unid.): ${caixaDeEmenda}`,
-                        `Pigtail ${data['caboFibra']} 50x125 simples LC (Unid.): ${pigtailsPrimarios}`,
+                        `Pigtail ${especFibra} 50x125 simples LC (Unid.): ${pigtailsPrimarios}`,
                         `Acoplador óptico 50x125 LC duplo azul (Unid.): ${acopladorOpticoPrimario}`,
                         `Cordão óptico 50x125 LC duplo (Unid): ${cordaoOpticoPrimario}`,
-                        `Cabo Óptico ${data['caboFibra']} 50x125 Tight Buffer ${data['paresFibras'] * 2} fibras (metros): ${caboOpticoInterno}`,
+                        `Cabo Óptico ${especFibra} 50x125 Tight Buffer ${data['paresFibras'] * 2} fibras (metros): ${caboOpticoInterno}`,
                     );
                 }
                 else {
@@ -405,7 +405,7 @@
                         `Pigtail SM 9x125 simples LC (Unid.): ${pigtailsSecundarios}`,
                         `Acoplador óptico 9x125 LC duplo azul (Unid.): ${acopladorOpticoSecundario}`,
                         `Cordão óptico 9x125 duplo LC duplo (Unid.): ${cordaoOpticoSecundario}`,
-                        `Cabo Óptico Monomodo 50x125 Tight Buffer ${data['paresFibrasSM'] * 2} fibras (metros): ${caboOpticoExterno}`,
+                        `Cabo Óptico SM 50x125 Tight Buffer ${data['paresFibrasSM'] * 2} fibras (metros): ${caboOpticoExterno}`,
                         `Rack(s) ${tamRacksBackboneSecundario}u (Unid.): 2`
                         );
                 }
