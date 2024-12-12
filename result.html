@@ -126,7 +126,7 @@
                 var etiquetasParaTomadasEEspelhos = tomadasRj45 + EspelhoDeConexao;
                 var caixasCaboUTP = Math.ceil((data['dados']+data['cftv']+data['voip'])*data['distanciaMH']/305) * data['pavimentos'];
                 var etiquetasCabosMalhaHorizontal = (data['dados']+data['cftv']+data['voip'])*2 * data['pavimentos'];
-                var ppmh = Math.ceil((((data['dados']+data['voip'])+data['cftv'])*data['pavimentos'])/24);
+                var ppmh = Math.ceil((data['dados']+data['voip']+data['cftv'])/24)*data['pavimentos'];
                 var organizadorFrontalDeCabos = ppmh*2;
                 var etiquetasParaIdentificacaoDePortas = ppmh*24; //também foram consideradas as portas que não estão sendo usadas
                 var cordaoPatchCableAzul = data['dados'] * data['pavimentos'];
@@ -240,6 +240,10 @@
                 }
 
                 var organizadoresLaterais = racks*2*data['pavimentos'];
+                if(data['rack'] == '1'){ //se o rack estiver fechado
+                    organizadoresLaterais = 0;
+                }
+
                 var bandejasFixas = racks*data['pavimentos'];
                 var bandejasDeslizantes = numDVR; //um para cada dvr
                 var parafusoPorcaGaiola = Math.ceil(((tamRackTot+tamRacksBackbonePrimario)*4*data['pavimentos'])/10);
@@ -277,7 +281,7 @@
                 }
 
 
-                if(data['rack'] === 'sim'){
+                if(data['rack'] == '0'){
                     var fechadoouaberto = 'aberto';
                 }
                 else {
