@@ -230,7 +230,7 @@
                 }
 
                 var exaustores = 0; //quantificacao de exaustores para os racks caso os racks estejam fechados, exaustores = 2u
-                if(data['backboneExistente'] == 1){
+                if(data['backboneExistente'] == 1 && data['rack'] == 1){
                     exaustores += arrBackbone.length;
                 }
                 if(data['rack'] == 1){
