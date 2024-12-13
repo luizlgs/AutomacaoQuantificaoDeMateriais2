@@ -226,6 +226,14 @@
                         }
                     }
                 }
+
+                var exaustores = 0;
+                if(data['backboneExistente'] == 1){
+                    exaustores += arrBackbone.length;
+                }
+                if(data['rack'] == 1){
+                    exaustores += arr.length*data['pavimentos'];
+                }
                 
                 
                 
@@ -372,6 +380,7 @@
                     `Rack(s) (${fechadoouaberto}) = ${arr.length*data['pavimentos']} unidade(s)`, 
                     `${existenciaAndarTipo}`,
                     `${configAndarBackbone}`,
+                    `Número de exaustores: ${exaustores}`,
 
                     `Organizador lateral para Rack (Para os tamanhos correspondentes): ${organizadoresLaterais} unidade(s)`,
                     `Bandeja fixa - 19" de largura: ${bandejasFixas} unidade(s)`,
