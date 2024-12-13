@@ -97,8 +97,8 @@
 
             <label>Cálculo de matériais para</label>
                 <div class="radio-group">
-                    <label><input type="radio" name="andarunicooutipo" value="tipo" onclick="toggleNPavimentos(true)" required>Andares tipo</label>
-                    <label><input type="radio" name="andarunicooutipo" value="unico"onclick="toggleNPavimentos(false)" checked="checked" required>Andar único</label>
+                    <label><input type="radio" name="andarunicooutipo" value=1 onclick="toggleNPavimentos(true)" required>Andares tipo</label>
+                    <label><input type="radio" name="andarunicooutipo" value=0 onclick="toggleNPavimentos(false)" checked="checked" required>Andar único</label>
                 </div>
             <label for="pavimentos" id="label-pavimentos" style="display: none;">Número de andares tipo da edificação:</label>
             <input type="number" id="pavimentos" name="pavimentos" min="0" style="display: none;" value="1" required>
@@ -134,8 +134,8 @@
 
             <label>Verificação da existência de backbone secundário:</label>
             <div class="radio-group">
-                <label><input type="radio" name="backboneExistente" value="sim" onclick="toggleBackboneSecundario(true)" required>Sim</label>
-                <label><input id="nao" type="radio" name="backboneExistente" value="nao"checked= "checked" onclick="toggleBackboneSecundario(false)" required>Não</label>
+                <label><input type="radio" name="backboneExistente" value=1 onclick="toggleBackboneSecundario(true)" required>Sim</label>
+                <label><input id="nao" type="radio" name="backboneExistente" value=0 checked= "checked" onclick="toggleBackboneSecundario(false)" required>Não</label>
             </div>
 
         </div>

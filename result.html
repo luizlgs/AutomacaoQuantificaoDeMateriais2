@@ -133,7 +133,7 @@
                 var cordaoPatchCableAmarelo = data['voip'] * data['pavimentos'];
                 var cordaoPatchCableVermelho = data['cftv'] * data['pavimentos'];
 
-                var sw = Math.ceil((data['dados']+data['cftv']+data['voip'])/24);
+                var sw = Math.ceil((data['dados']+data['cftv']+data['voip'])/24)*data['pavimentos'];
 
                 /*
                 calculo de racks
@@ -289,6 +289,9 @@
                 }
 
                 var numRacksPrimario = 0;
+                if(data['andarunicooutipo'] == 1) {
+                    numRacksPrimario = 1;
+                }
 
 
 
@@ -320,7 +323,7 @@
                 
                 var numRacksSecundario = 0;
                 if(distanciaPredios > 0){
-                    numRacksSecundario = 2;
+                    numRacksSecundario = 1;
                 }
                 
 
@@ -328,11 +331,18 @@
 
 
                 //miscelanea backbone
-                var abracadeiraVelcroBackbones = numRacksPrimario + numRacksSecundario;
-                var abracadeiraHellermanBackbones = numRacksPrimario + numRacksSecundario;
+                var abracadeiraVelcroBackbones = Math.ceil(tamRacksBackbonePrimario/48) + numRacksSecundario;
+                var abracadeiraHellermanBackbones = Math.ceil(tamRacksBackbonePrimario/48) + numRacksSecundario;
                 var filtroDeLihnaBackbones = Math.ceil(numDiosPrimario/6) + Math.ceil(numDiosSecundario/6); //um a cada 6 DIOs em cada rack de backbone
-                var etiquestasRacksBackbone = numRacksPrimario + numRacksSecundario;
-                var totaRacksBackbone = numRacksPrimario + numRacksSecundario;
+                var etiquestasRacksBackbone = Math.ceil(tamRacksBackbonePrimario/48) + numRacksSecundario;
+                var totaRacksBackbone = Math.ceil(tamRacksBackbonePrimario/48) + numRacksSecundario;
+                if(data['andarunicooutipo'] == 1){
+                    var infoMiscelanea = "Miscelânea do backbone primário e secundário:";
+                }
+                else{
+                    var infoMiscelanea = "Miscelânea do backbone secundário:";
+                }
+
                 
 
 
@@ -378,7 +388,7 @@
                 if(data['pavimentos']>1){
                     fixedItems2.push(
                         `DIOs 24 fibras (Unid.): ${numDiosPrimario} `,
-                        `Caixas de emenda ${data['paresFibras'] * 2} fibras (Unid.): ${caixaDeEmenda}`,
+                        `Caixas de emenda ${data['paresFibras']} fibras (Unid.): ${caixaDeEmenda}`,
                         `Pigtail ${especFibra} 50x125 simples LC (Unid.): ${pigtailsPrimarios}`,
                         `Acoplador óptico 50x125 LC duplo azul (Unid.): ${acopladorOpticoPrimario}`,
                         `Cordão óptico 50x125 LC duplo (Unid): ${cordaoOpticoPrimario}`,
@@ -391,7 +401,7 @@
 
                 const fixedItems3 = [];
 
-                if (data['backboneExistente'] === "nao") {
+                if (data['backboneExistente'] == 0) {
                     fixedItems3.push(`Backbone Secundário inexistente`);
                     miscelaniabackbone = 0;
                     
@@ -400,19 +410,21 @@
                     backbone_primario.innerText = "Backbone Secundário"  
                     miscelaniabackbone = 1;
                         fixedItems3.push(
+                        `Material para a interligação dos dois prédios:`,
                         `DIOs 24 fibras(Unid.): ${numDiosSecundario}`,
                         `Caixa de emenda ${data['paresFibrasSM']} fibras (Unid.): ${caixaDeEmendaSecundario}`,
                         `Pigtail SM 9x125 simples LC (Unid.): ${pigtailsSecundarios}`,
                         `Acoplador óptico 9x125 LC duplo azul (Unid.): ${acopladorOpticoSecundario}`,
                         `Cordão óptico 9x125 duplo LC duplo (Unid.): ${cordaoOpticoSecundario}`,
-                        `Cabo Óptico SM 50x125 Tight Buffer ${data['paresFibrasSM'] * 2} fibras (metros): ${caboOpticoExterno}`,
-                        `Rack(s) ${tamRacksBackboneSecundario}u (Unid.): 2`
+                        `Cabo Óptico SM 9x125 Tight Buffer ${data['paresFibrasSM'] * 2} fibras (metros): ${caboOpticoExterno}`,
+                        `Rack(s) de ${tamRacksBackboneSecundario}u para backbones primários (Unid.): 2`,
                         );
                 }
 
                 const fixedItems4 = [];
-                if(data['backboneExistente'] === "sim" || data['andarunicooutipo'] === "tipo"){
+                if(data['backboneExistente'] == 1 || data['andarunicooutipo'] == 1){
                     fixedItems4.push(
+                        `${infoMiscelanea}`,
                         `Abraçadeira de velcro para rack(s) de backbone (rolo 3m): ${abracadeiraVelcroBackbones }`,
                         `Abraçadeira Hellermann conjunto com 100 Unidades para rack(s) de backbone: ${abracadeiraHellermanBackbones}`,
                         `Filtro de linha com 06 tomadas para rack(s) de backbone: ${filtroDeLihnaBackbones}`,
