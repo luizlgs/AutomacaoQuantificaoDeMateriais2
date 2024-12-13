@@ -195,8 +195,10 @@
 
                 var arrBackbone = arr.concat();
                 var x = arrBackbone.toString().substr(arrBackbone.toString().length-3);
+                if(isNaN(x)){
+                    x = arrBackbone.toString().substr(arrBackbone.toString().length-2);
+                }
                 x = parseInt(x.slice(0, -1)); //ultimo hack da lista de racks dos andares tipo
-
 
                 while(true) {
                     if(x+tamRacksBackbonePrimario<=48) {
@@ -232,7 +234,7 @@
                     exaustores += arrBackbone.length;
                 }
                 if(data['rack'] == 1){
-                    exaustores += arr.length*data['pavimentos'];
+                    exaustores += arr.length*(data['pavimentos']-1);
                 }
                 
                 
@@ -285,7 +287,7 @@
                 //calculo cabo optico multimodo de backbone
                 var caboOpticoInterno = 0;
                 for (var i = 1; i<data['pavimentos']; i++){
-                    caboOpticoInterno += (data['distanciaBackbone'] * i) + 1;
+                    caboOpticoInterno += (data['distanciaBackbone'] * (i+1)) + 5;
                 }
 
 
