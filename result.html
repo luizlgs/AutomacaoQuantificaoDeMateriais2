@@ -147,7 +147,7 @@
                 var tamUnidRack = 0;
 
                 //calculo rack backbone primario (sera considerado o espaço para DIOS)
-                var tamRacksBackbonePrimario = Math.ceil(((data['pavimentos']-1) * data['paresFibras'] * 2)/24) + (Math.ceil(Math.ceil(((data['pavimentos']-1) * data['paresFibras'] * 2)/24)/2));
+                var tamRacksBackbonePrimario = Math.ceil(((data['pavimentos']-1) * (data['paresFibras'] * 2))/24) + (Math.ceil(Math.ceil(((data['pavimentos']-1) * data['paresFibras'] * 2)/24)/2));
                 if(tamRacksBackbonePrimario%4!=0){
                         for(var i = tamRacksBackbonePrimario; i%4!=0; i++){}
                         tamRacksBackbonePrimario = i;
