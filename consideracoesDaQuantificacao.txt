@@ -7,7 +7,3 @@ sera considerado DVRs com suporte para 48 câmeras
 o calculo dos filtros de linha consideram os numeros de DIOs, DVRS e switches, os equipamentos ativos
 o espaço para o backbone interno está alocado no rack de malha horizontal do primeiro andar
 foi contabilizado no backbone que interliga os predios os materiais de ambos os edifícios
-
-
-
-teste2
